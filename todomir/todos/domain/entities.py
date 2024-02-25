@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 import datetime
 
 
-class TodoTask(BaseModel): 
+class TodoTask(BaseModel):
     id: int | None = Field(default=None)
     name: str
     is_overdue: bool = Field(default=False)
@@ -18,4 +18,3 @@ class TodoTaskSchedule(BaseModel):
     repeat_every_x_days: int | None = Field(default=None)
     repeat_every_x_weeks: int | None = Field(default=None)
     repeat_every_x_months: int | None = Field(default=None)
-

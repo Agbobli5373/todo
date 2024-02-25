@@ -48,7 +48,9 @@ class TodoTaskRepository:
             self.persist(entity)
 
     def remove_all(self, entities: list[entities.TodoTask]) -> None:
-        models.TodoTask.objects.filter(id__in=[entity.id for entity in entities]).delete()
+        models.TodoTask.objects.filter(
+            id__in=[entity.id for entity in entities]
+        ).delete()
 
     def _map_from_query(self, query: QuerySet) -> list[entities.TodoTask]:
         return [

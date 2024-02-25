@@ -26,6 +26,7 @@ def create_current_day_schedule():
 
     task_repository.persist_all(todo_tasks)
 
+
 @app.task
 def clean_finished_tasks():
     task_repository = repositories.TodoTaskRepository()

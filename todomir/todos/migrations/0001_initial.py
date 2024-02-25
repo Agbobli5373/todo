@@ -5,32 +5,53 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='TodoTaskSchedule',
+            name="TodoTaskSchedule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('day_planned_to_complete', models.DateField()),
-                ('repeat_every_x_days', models.IntegerField(blank=True, null=True)),
-                ('repeat_every_x_weeks', models.IntegerField(blank=True, null=True)),
-                ('repeat_every_x_months', models.IntegerField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("day_planned_to_complete", models.DateField()),
+                ("repeat_every_x_days", models.IntegerField(blank=True, null=True)),
+                ("repeat_every_x_weeks", models.IntegerField(blank=True, null=True)),
+                ("repeat_every_x_months", models.IntegerField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='TodoTask',
+            name="TodoTask",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('completed', models.DateTimeField(null=True)),
-                ('day_planned_to_complete', models.DateField()),
-                ('schedule', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='todos.todotaskschedule')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("completed", models.DateTimeField(null=True)),
+                ("day_planned_to_complete", models.DateField()),
+                (
+                    "schedule",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="todos.todotaskschedule",
+                    ),
+                ),
             ],
         ),
     ]
