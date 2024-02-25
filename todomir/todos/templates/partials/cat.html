@@ -1,0 +1,16 @@
+<div id="cat-container">
+  <button
+    hx-post="/cat"
+    hx-target="#cat-container"
+    hx-swap="outerHTML"
+    class="button button-outline"
+  >
+    Emergency Cat Photo
+  </button>
+  <span class="htmx-indicator">Please wait, finding the best cat...</span>
+  {% if cat %}
+  <div>
+    <image src="{{cat.url}}" alt="Please wait, cat is preparing for you..."/>
+  </div>
+  {% endif %}
+</div>

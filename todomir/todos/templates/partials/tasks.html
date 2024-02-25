@@ -1,0 +1,39 @@
+<div class="tasks-container">
+<div class="row">
+  {% if all_completed %}
+  <h6 class="all-completed">Good job! All tasks are completed!</h6>
+  {% elif partially_completed %}
+  <h6 class="parially-completed">You completed {{ partially_completed }} tasks today, keep it up!</h6>
+  {% else %}
+  <h6>You have {{ tasks | length }} task(s) for today</h6>
+  {% endif %}
+</div>
+<div class="row">
+  <div class="column">
+    <ul style="list-style: none">
+      {% if tasks %} {% for task in tasks %}
+      <input id="task_{{ task.id }}"name="task_id" type="hidden" value="{{ task.id }}" />
+      <li
+        class="task-item"
+        hx-post="/complete"
+        hx-target=".tasks-container"
+        hx-swap="outerHTML"
+        hx-include="#task_{{ task.id }}"
+        {% if task.is_completed %} disabled {% endif %}
+      >
+        <input
+          type="checkbox"
+          class="todo-checkbox"
+          {% if task.is_completed %} checked disabled {% endif %}
+        />
+        <span
+          class="{% if task.is_completed %} completed-task {% elif task.is_overdue %} overdue-task {% endif %}"
+        >
+          {{ task.name }}
+        </span>
+      </li>
+      {% endfor %} {% else %} No tasks for today :D {% endif %}
+    </ul>
+  </div>
+</div>
+</div>

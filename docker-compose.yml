@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  todomir:
+    image: todomir 
+    build: .
+    environment:
+      - DJANGO_SECRET=secret
+      - DEBUG=false
+      - ALLOWED_HOSTS=localhost
+      - TRUSTED_ORIGINS=http://localhost:8080
+    ports:
+      - "8080:8000"
+
+  celery-worker:
+    image: todomir 
+    command: celery-worker 
+
+  celery-beat:
+    image: todomir 
+    command: celery-beat
+
+  redis:
+    image: redis:latest
+    expose: ["6379"]
+
+volumes:
+  todomir:
+    external: true

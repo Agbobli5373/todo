@@ -1,0 +1,36 @@
+{% load static %}
+<head>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic"
+  />
+  <link rel="stylesheet" href="{% static 'css/milligram.min.css' %}" defer />
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <style>
+    .todo-checkbox {
+      margin-top: 5px;
+      margin-right: 10px;
+    }
+
+    .main {
+      margin-top: 20pt;
+    }
+    .completed-task {
+      text-decoration: line-through;
+      color: darkgray;
+    }
+    .overdue-task {
+        color: #ff6700;
+    }
+  </style>
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <div class="container main">
+    <div class="row">
+      <h1>Daily tasks :)</h1>
+    </div>
+    {% include 'partials/tasks.html' %}
+    {% include 'partials/add_task.html' %}
+    {% include 'partials/cat.html' %}
+  </div>
+</body>

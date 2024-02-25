@@ -1,0 +1,8 @@
+django
+django-htmx
+pydantic
+requests
+celery
+redis
+environs
+django-push-notifications[WP]
