@@ -78,6 +78,12 @@ class TodoTaskRepository:
 
 
 class TodoTaskScheduleRepository:
+    def get_list(self) -> list[entities.TodoTaskSchedule]:
+        queryset = models.TodoTaskSchedule.objects.all().order_by(
+            "day_planned_to_complete"
+        )
+        return self._map_from_query(queryset)
+
     def get_scheduled_for_day(
         self, day: date, exclude_ids: list[int] | None = None
     ) -> list[entities.TodoTaskSchedule]:
@@ -101,12 +107,13 @@ class TodoTaskScheduleRepository:
             instance = models.TodoTaskSchedule()
 
         instance.name = entity.name
-        instance.completed = entity.completed_at
         instance.day_planned_to_complete = entity.day_planned_to_complete
         instance.repeat_every_x_days = entity.repeat_every_x_days
-        instance.repeat_every_x_weeks = entity.repeat_every_x_week
+        instance.repeat_every_x_weeks = entity.repeat_every_x_weeks
         instance.repeat_every_x_months = entity.repeat_every_x_months
         instance.save()
+
+        entity.id = instance.id
 
     def remove(self, entity: entities.TodoTaskSchedule) -> None:
         models.TodoTaskSchedule.objects.filter(id=entity.id).delete()

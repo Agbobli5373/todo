@@ -50,3 +50,29 @@ def add_new_task(new_task: str):
     task_repository = repositories.TodoTaskRepository()
     task = entities.TodoTask(name=new_task)
     task_repository.persist(task)
+
+
+def get_schedules() -> list[entities.TodoTaskSchedule]:
+    schedule_repository = repositories.TodoTaskScheduleRepository()
+    return schedule_repository.get_list()
+
+
+def create_schedule(validated_form_data: dict) -> entities.TodoTaskSchedule:
+    schedule_repository = repositories.TodoTaskScheduleRepository()
+    schedule = entities.TodoTaskSchedule(**validated_form_data)
+    schedule_repository.persist(schedule)
+    return schedule
+
+
+def update_schedule(
+    schedule: entities.TodoTaskSchedule, validated_form_data: dict
+) -> entities.TodoTaskSchedule:
+    schedule_repository = repositories.TodoTaskScheduleRepository()
+    schedule = entities.TodoTaskSchedule(**validated_form_data, id=schedule.id)
+    schedule_repository.persist(schedule)
+    return schedule
+
+
+def get_schedule_by_id(schedule_id: int) -> entities.TodoTaskSchedule | None:
+    schedule_repository = repositories.TodoTaskScheduleRepository()
+    return schedule_repository.get_by_id(schedule_id)

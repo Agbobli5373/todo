@@ -6,24 +6,34 @@ services:
     build: .
     environment:
       - DJANGO_SECRET=secret
-      - DEBUG=false
+      - DEBUG=true
       - ALLOWED_HOSTS=localhost
       - TRUSTED_ORIGINS=http://localhost:8080
+      - DB_PATH=/srv/db/db.sqlite3
     ports:
       - "8080:8000"
+    volumes:
+      - todomir_db:/srv/db/
 
   celery-worker:
     image: todomir 
     command: celery-worker 
+    environment:
+      - DJANGO_SECRET=secret
+      - DEBUG=false
+      - DB_PATH=/srv/db/db.sqlite3
 
   celery-beat:
     image: todomir 
     command: celery-beat
+    environment:
+      - DJANGO_SECRET=secret
+      - DEBUG=false
+      - DB_PATH=/srv/db/db.sqlite3
 
   redis:
     image: redis:latest
     expose: ["6379"]
 
 volumes:
-  todomir:
-    external: true
+  todomir_db:

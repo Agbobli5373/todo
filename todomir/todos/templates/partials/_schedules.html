@@ -1,0 +1,26 @@
+<div class="grid">
+  <h1>Schedules</h1>
+  <button
+    hx-get="/schedules/create"
+    hx-target="#content-container"
+    hx-swap="innerHTML"
+    hx-indicator="#loading"
+    hx-push-url="/schedules/create"
+  >Create</button>
+</div>
+<hr/>
+<div class="schedules-container">
+  {% if schedule %}
+  <article class="pico-background-green-500">
+    <a 
+      href="/schedules/{{ schedule.id }}"
+      hx-get="/schedules/{{ schedule.id }}"
+      hx-target="#content-container"
+      hx-swap="innerHTML"
+      hx-indicator="#loading"
+      hx-push-url="/schedules/{{ schedule.id }}"
+    >Schedule</a> {{ action }} successfully!</span>
+  </article>
+  {% endif %}
+  {% include "partials/_schedules_table.html" %}
+</div>

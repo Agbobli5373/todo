@@ -1,0 +1,95 @@
+<fieldset>
+  <label>
+    Task name
+    <input
+      name="name"
+      placeholder="eg. Clean bathroom"
+      {% if form.errors.name %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% firstof form.name.value form.name.initial as name %}
+      {% if name %} value="{{ name }}" {% endif %}
+    />
+    {% if form.errors.name %}
+    <small id="invalid-helper">
+      {{ form.errors.name.0 | escape }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Start day
+    <input
+      name="day_planned_to_complete"
+      type="date"
+      {% if form.errors.day_planned_to_complete %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% firstof form.day_planned_to_complete.value form.day_planned_to_complete.initial as day_planned_to_complete %}
+      {% if day_planned_to_complete %} value="{{ day_planned_to_complete }}" {% endif %}
+    />
+    {% if form.errors.day_planned_to_complete %}
+    <small id="invalid-helper">
+      {{ form.errors.day_planned_to_complete.0 | escape }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Repeat every X days
+    <input
+      placeholder="optional"
+      name="repeat_every_x_days"
+      type="number"
+      min="0"
+      {% if form.errors.repeat_every_x_days %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if form.repeat_every_x_days.value %} value="{{ form.repeat_every_x_days.value }}" {% endif %}
+    />
+    {% if form.errors.repeat_every_x_days %}
+    <small id="invalid-helper">
+      {{ form.errors.repeat_every_x_days.0 | escape }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Repeat every X weeks
+    <input
+      placeholder="optional"
+      name="repeat_every_x_weeks"
+      type="number"
+      min="0"
+      {% if form.errors.repeat_every_x_weeks %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if form.repeat_every_x_weeks.value %} value="{{ form.repeat_every_x_weeks.value }}" {% endif %}
+    />
+    {% if form.errors.repeat_every_x_weeks %}
+    <small id="invalid-helper">
+      {{ form.errors.repeat_every_x_weeks.0 | escape }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Repeat every X months
+    <input
+      placeholder="optional"
+      name="repeat_every_x_months"
+      type="number"
+      min="0"
+      {% if form.errors.repeat_every_x_months %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if form.repeat_every_x_months.value %} value="{{ form.repeat_every_x_months.value }}" {% endif %}
+    />
+    {% if form.errors.repeat_every_x_months %}
+    <small id="invalid-helper">
+      {{ form.errors.repeat_every_x_months.0 | escape }}
+    </small>
+    {% endif %}
+  </label>
+</fieldset>

@@ -32,8 +32,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET", "super_secret")
 DEBUG = env.bool("DEBUG", True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", [])
-CSRF_TRUSED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
-CORS_TRUSED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
+CSRF_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
+CORS_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
 
 
 # Application definition
@@ -89,7 +89,7 @@ WSGI_APPLICATION = "todomir.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": env("DB_PATH", BASE_DIR / "db.sqlite3"),
     }
 }
 

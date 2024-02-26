@@ -1,0 +1,83 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/pico.fuchsia.min.css' %}"
+      defer
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/pico.colors.min.css' %}"
+      defer
+    />
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <title>Daily Tasks</title>
+    <style>
+      .completed-task {
+        text-decoration: line-through;
+        color: darkgray;
+      }
+      .overdue-task {
+        color: #ff6700;
+      }
+      .htmx-indicator {
+        opacity: 0;
+        transition: opacity 500ms ease-in;
+      }
+      .htmx-request .htmx-indicator {
+        opacity: 1;
+      }
+      .htmx-request.htmx-indicator {
+        opacity: 1;
+      }
+      .button-small {
+        padding: 6px, 16px, 6px, 16px;
+      }
+    </style>
+  </head>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <main class="container">
+      {% block nav %}
+      <nav>
+        <ul>
+          <li><strong>Todomir</strong></li>
+        </ul>
+        <ul>
+          <li>
+            <a
+              href="/"
+              hx-get="/"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="/"
+              >Daily tasks</a
+            >
+          </li>
+          <li>
+            <a
+              href="/schedules"
+              hx-get="/schedules"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="/schedules"
+              >Schedules</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <progress id="loading" class="htmx-indicator"></progress>
+      {% endblock %}
+      <div id="content-container">
+      {% block content %} 
+      {% endblock %}
+      </div>
+    </main>
+  </body>
+</html>

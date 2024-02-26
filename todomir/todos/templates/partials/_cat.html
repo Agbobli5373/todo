@@ -1,0 +1,20 @@
+<section id="cat-container">
+  <div class="grid">
+    <button
+      class="outline"
+      hx-post="/cat"
+      hx-target="#cat-container"
+      hx-swap="outerHTML"
+      hx-indicator="#loading"
+      hx-disabled-elt="this"
+    >
+      Emergency Cat Photo
+    </button>
+    <span class="htmx-indicator">Please wait, finding the best cat...</span>
+  </div>
+  {% if cat %}
+  <div>
+    <image src="{{cat.url}}" alt="Please wait, cat is preparing for you..."/>
+  </div>
+  {% endif %}
+</section>

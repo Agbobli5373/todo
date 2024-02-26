@@ -2,7 +2,7 @@ FROM python:3.12-alpine
 MAINTAINER jkawczynski
 
 ENV APP_ROOT=/app
-ENV ETC_ROOT=/srv
+ENV SRV_ROOT=/srv
 ENV GUNICORN_CONFIG=/srv/gunicorn/config.py
 ENV VENV_PATH=/opt/venv
 ENV PROD=true
@@ -29,13 +29,15 @@ RUN uv pip install gunicorn && \
     uv pip install -r requirements.txt
 
 ADD etc/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD etc/gunicorn/* $ETC_ROOT/gunicorn/
+ADD etc/gunicorn/* $SRV_ROOT/gunicorn/
 ADD todomir $APP_ROOT/
-ADD docker_entrypoint.sh $ETC_ROOT
+ADD docker_entrypoint.sh $SRV_ROOT
 
-RUN chmod +x $ETC_ROOT/docker_entrypoint.sh && \
+RUN mkdir $SRV_ROOT/db/ && touch $SRV_ROOT/db/db.sqlite3
+
+RUN chmod +x $SRV_ROOT/docker_entrypoint.sh && \
     chown app:app -R $APP_ROOT && \
-    chown app:app -R $ETC_ROOT
+    chown app:app -R $SRV_ROOT
 
 USER app
 

@@ -45,6 +45,7 @@ django-push-notifications==3.0.2
 environs==10.3.0
 http-ece==1.2.0
     # via pywebpush
+humanize==4.9.0
 idna==3.6
     # via requests
 kombu==5.3.5
