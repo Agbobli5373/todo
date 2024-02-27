@@ -7,3 +7,9 @@ redis
 environs
 django-push-notifications[WP]
 humanize
+
+pytest
+pytest-django
+pytest-mock
+polyfactory
+time-machine

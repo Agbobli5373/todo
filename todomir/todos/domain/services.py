@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from django.core.exceptions import ValidationError
 
@@ -25,9 +25,8 @@ def complete_task(task_id: int):
         schedule := schedule_repository.get_by_id(task.schedule_id)
     ):
         if schedule.repeat_every_x_days:
-            schedule.day_planned_to_complete = (
-                schedule.day_planned_to_complete
-                + timedelta(days=schedule.repeat_every_x_days)
+            schedule.day_planned_to_complete = date.today() + timedelta(
+                days=schedule.repeat_every_x_days
             )
             schedule_repository.persist(schedule)
         elif schedule.repeat_every_x_weeks:
@@ -35,12 +34,20 @@ def complete_task(task_id: int):
                 schedule.day_planned_to_complete
                 + timedelta(weeks=schedule.repeat_every_x_weeks)
             )
+            if schedule.day_planned_to_complete <= date.today():
+                schedule.day_planned_to_complete = date.today() + timedelta(
+                    weeks=schedule.repeat_every_x_weeks
+                )
             schedule_repository.persist(schedule)
         elif schedule.repeat_every_x_months:
             schedule.day_planned_to_complete = (
                 schedule.day_planned_to_complete
                 + timedelta(weeks=schedule.repeat_every_x_months * 4)
             )
+            if schedule.day_planned_to_complete <= date.today():
+                schedule.day_planned_to_complete = date.today() + timedelta(
+                    weeks=schedule.repeat_every_x_months * 4
+                )
             schedule_repository.persist(schedule)
         else:
             schedule_repository.remove(schedule)

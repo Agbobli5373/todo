@@ -5,7 +5,7 @@ from todos.domain import entities, repositories
 
 
 @app.task
-def create_current_day_schedule():
+def create_tasks_for_today():
     task_repository = repositories.TodoTaskRepository()
     schedule_repository = repositories.TodoTaskScheduleRepository()
 

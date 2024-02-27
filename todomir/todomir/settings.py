@@ -148,7 +148,7 @@ CELERY_TIMEZONE = "Europe/Warsaw"
 
 CELERY_BEAT_SCHEDULE = {
     "tasks-scheduler": {
-        "task": "todos.tasks.create_current_day_schedule",
+        "task": "todos.tasks.create_tasks_for_today",
         # Daily at 1am
         "schedule": crontab(minute=0, hour=1),
     },
