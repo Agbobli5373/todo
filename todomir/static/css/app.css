@@ -1,0 +1,24 @@
+.completed-task {
+  text-decoration: line-through;
+  color: darkgray;
+}
+.overdue-task {
+  color: #ff6700;
+}
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+.button-small {
+  padding: 6px, 16px, 6px, 16px;
+}
+.task-item {
+  list-style: none;
+  padding: 5px 0 5px 0;
+}

@@ -15,30 +15,13 @@
       href="{% static 'css/pico.colors.min.css' %}"
       defer
     />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/app.css' %}"
+      defer
+    />
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
     <title>Daily Tasks</title>
-    <style>
-      .completed-task {
-        text-decoration: line-through;
-        color: darkgray;
-      }
-      .overdue-task {
-        color: #ff6700;
-      }
-      .htmx-indicator {
-        opacity: 0;
-        transition: opacity 500ms ease-in;
-      }
-      .htmx-request .htmx-indicator {
-        opacity: 1;
-      }
-      .htmx-request.htmx-indicator {
-        opacity: 1;
-      }
-      .button-small {
-        padding: 6px, 16px, 6px, 16px;
-      }
-    </style>
   </head>
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <main class="container">
@@ -55,7 +38,7 @@
               hx-target="#content-container"
               hx-swap="innerHTML"
               hx-indicator="#loading"
-              hx-push-url="/"
+              hx-push-url="true"
               >Daily tasks</a
             >
           </li>
@@ -66,7 +49,7 @@
               hx-target="#content-container"
               hx-swap="innerHTML"
               hx-indicator="#loading"
-              hx-push-url="/schedules"
+              hx-push-url="true"
               >Schedules</a
             >
           </li>
