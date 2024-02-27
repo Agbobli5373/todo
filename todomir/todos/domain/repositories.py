@@ -52,6 +52,9 @@ class TodoTaskRepository:
             id__in=[entity.id for entity in entities]
         ).delete()
 
+    def remove_all_finished(self) -> None:
+        models.TodoTask.objects.filter(completed__isnull=False).delete()
+
     def _map_from_query(self, query: QuerySet) -> list[entities.TodoTask]:
         return [
             entities.TodoTask(
@@ -114,6 +117,11 @@ class TodoTaskScheduleRepository:
         instance.save()
 
         entity.id = instance.id
+
+    def remove_all_finished(self) -> None:
+        models.TodoTaskSchedule.objects.filter(
+            day_planned_to_complete__lt=date.today()
+        ).delete()
 
     def remove(self, entity: entities.TodoTaskSchedule) -> None:
         models.TodoTaskSchedule.objects.filter(id=entity.id).delete()

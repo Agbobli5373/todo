@@ -147,10 +147,15 @@ CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_TIMEZONE = "Europe/Warsaw"
 
 CELERY_BEAT_SCHEDULE = {
-    "shopping-list-cleanup": {
-        "task": "todos.tasks.create_daily_tasks",
-        # Daily at 5am
-        "schedule": crontab(minute=0, hour=5),
+    "tasks-scheduler": {
+        "task": "todos.tasks.create_current_day_schedule",
+        # Daily at 1am
+        "schedule": crontab(minute=0, hour=1),
+    },
+    "cleanup-finished-tasks": {
+        "task": "todos.tasks.clean_finished_tasks_and_schedules",
+        # Daily at 1am
+        "schedule": crontab(minute=0, hour=1),
     },
 }
 

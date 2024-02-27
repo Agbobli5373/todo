@@ -28,8 +28,9 @@ def create_current_day_schedule():
 
 
 @app.task
-def clean_finished_tasks():
+def clean_finished_tasks_and_schedules():
     task_repository = repositories.TodoTaskRepository()
-    tasks = task_repository.get_finished()
+    schedule_repository = repositories.TodoTaskScheduleRepository()
 
-    task_repository.remove_all(tasks)
+    task_repository.remove_all_finished()
+    schedule_repository.remove_all_finished()
