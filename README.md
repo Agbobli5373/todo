@@ -21,3 +21,8 @@ $ uv pip compile requirements.in -o requirements.txt
 
 ### Docker
 You can run it with docker, please see `docker-compose.yml` file.
+
+### Screenshots
+
+![todomir](./screenshots/todomir1.jpeg)
+![todomir](./screenshots/todomir2.jpeg)
