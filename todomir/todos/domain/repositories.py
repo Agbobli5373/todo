@@ -14,6 +14,13 @@ class TodoTaskRepository:
         except models.TodoTask.DoesNotExist:
             return None
 
+    def get_by_external_id(self, external_id: str) -> entities.TodoTask | None:
+        try:
+            instance = models.TodoTask.objects.get(external_id=external_id)
+            return self._map_from_instance(instance)
+        except models.TodoTask.DoesNotExist:
+            return None
+
     def get_list(self) -> list[entities.TodoTask]:
         queryset = models.TodoTask.objects.all().order_by(
             "completed", "day_planned_to_complete"
@@ -38,9 +45,13 @@ class TodoTaskRepository:
 
         instance.name = entity.name
         instance.completed = entity.completed_at
+        instance.schedule_id = entity.schedule_id
+        instance.external_id = entity.external_id
         if not instance.day_planned_to_complete:
             instance.day_planned_to_complete = date.today()
         instance.save()
+
+        entity.id = instance.id
 
     @transaction.atomic
     def persist_all(self, entities: list[entities.TodoTask]) -> None:

@@ -11,6 +11,7 @@ class TodoTask(BaseModel):
     is_completed: bool = Field(default=False)
     completed_at: datetime.datetime | None = Field(default=None)
     schedule_id: int | None = Field(default=None)
+    external_id: str | None = Field(default=None)
 
 
 class TodoTaskSchedule(BaseModel):

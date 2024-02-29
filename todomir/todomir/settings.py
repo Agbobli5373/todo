@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_htmx",
-    "push_notifications",
     "todos",
     "cat",
 ]
@@ -157,9 +156,9 @@ CELERY_BEAT_SCHEDULE = {
         # Daily at 1am
         "schedule": crontab(minute=0, hour=1),
     },
+    "create-prepare-waste-tasks": {
+        "task": "todos.integrations.tasks.create_task_to_prepare_wastes",
+        # Daily at 1am
+        "schedule": crontab(minute=0, hour=1),
+    },
 }
-
-# Web Push
-
-WP_PRIVATE_KEY = BASE_DIR / "webpush" / "privatekey.pem"
-WP_CALIMS = {"sub": "mailto:test@example.com"}

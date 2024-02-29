@@ -1,7 +1,5 @@
-import multiprocessing
-
 bind = "unix:/tmp/gunicorn.sock"
-workers = multiprocessing.cpu_count() * 2 + 1
+workers = 4
 wsgi_app = "todomir.wsgi"
 secure_scheme_headers = {
     "X-FORWARDED-PROTOCOL": "https",

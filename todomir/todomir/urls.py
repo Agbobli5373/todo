@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from todos.api.endpoints import api as todos_api
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("todos.urls")),
     path("cat", include("cat.urls")),
+    path("api/", todos_api.urls),
 ]

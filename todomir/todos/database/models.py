@@ -22,5 +22,6 @@ class TodoTask(models.Model):
         blank=True,
         related_name="tasks",
     )
+    external_id = models.CharField(max_length=64, null=True, blank=True, unique=True)
 
     objects = managers.TodoTaskManager()

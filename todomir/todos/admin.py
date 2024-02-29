@@ -1,4 +1,5 @@
 from django.contrib import admin
+import humanize
 
 from todos.database.models import TodoTaskSchedule, TodoTask
 
@@ -13,9 +14,12 @@ class ScheduleAdmin(admin.ModelAdmin):
     )
 
     def get_day(self, obj):
-        return obj.day_planned_to_complete.strftime("%A")
+        return humanize.naturalday(obj.day_planned_to_complete, format="%A, %b %d")
 
     get_day.short_description = "day"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by("day_planned_to_complete")
 
 
 class TodoTaskAdmin(admin.ModelAdmin):
@@ -25,7 +29,7 @@ class TodoTaskAdmin(admin.ModelAdmin):
     )
 
     def get_day(self, obj):
-        return obj.day_planned_to_complete.strftime("%A")
+        return humanize.naturalday(obj.day_planned_to_complete, format="%A, %b %d")
 
     get_day.short_description = "day"
 

@@ -1,12 +1,12 @@
+celery
 django
 django-htmx
+django-ninja
+environs
+humanize
 pydantic
 requests
-celery
 redis
-environs
-django-push-notifications[WP]
-humanize
 
 pytest
 pytest-django

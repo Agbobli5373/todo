@@ -1,5 +1,8 @@
-from datetime import date
+from datetime import date, datetime
+import time_machine
+from todos.integrations.wastes import SCHEDULE_MIXED_WASTES, SCHEDULE_SEGREGATED_WASTES
 from todos.tasks import create_tasks_for_today
+from todos.integrations.tasks import create_task_to_prepare_wastes
 
 from todos.domain import repositories, entities
 
@@ -41,4 +44,30 @@ class TestCreateTasksForToday:
                 )
                 for scheduled_task in schedules
             ]
+        )
+
+
+class TestCreateTasksToPrepareWastes:
+    @time_machine.travel(datetime(2024, 4, 12), tick=False)
+    def test_should_create_segregated(self, mocker):
+        mocker.patch.dict(SCHEDULE_SEGREGATED_WASTES, {2024: {4: [5, 13]}})
+        mocker.patch.dict(SCHEDULE_MIXED_WASTES, {2024: {5: [1, 13]}})
+        mock_persist = mocker.patch.object(repositories.TodoTaskRepository, "persist")
+
+        create_task_to_prepare_wastes()
+
+        mock_persist.assert_called_once_with(
+            entities.TodoTask(name="Wystawić śmieci segregowane")
+        )
+
+    @time_machine.travel(datetime(2024, 5, 19), tick=False)
+    def test_should_create_mixed(self, mocker):
+        mocker.patch.dict(SCHEDULE_SEGREGATED_WASTES, {2024: {4: [5, 20]}})
+        mocker.patch.dict(SCHEDULE_MIXED_WASTES, {2024: {5: [1, 20]}})
+        mock_persist = mocker.patch.object(repositories.TodoTaskRepository, "persist")
+
+        create_task_to_prepare_wastes()
+
+        mock_persist.assert_called_once_with(
+            entities.TodoTask(name="Wystawić kubeł na śmieci mieszane")
         )
