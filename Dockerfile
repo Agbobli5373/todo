@@ -25,7 +25,7 @@ RUN pip install uv
 ADD requirements.txt $APP_ROOT/
 WORKDIR $APP_ROOT
 RUN uv venv
-RUN uv pip install gunicorn && \
+RUN uv pip install gunicorn uvicorn && \
     uv pip install -r requirements.txt
 
 ADD etc/nginx/nginx.conf /etc/nginx/nginx.conf

@@ -1,4 +1,6 @@
 from datetime import date
+
+from asgiref.sync import async_to_sync
 from todomir.celery import app
 
 from todos.domain import entities, repositories
@@ -9,9 +11,13 @@ def create_tasks_for_today():
     task_repository = repositories.TodoTaskRepository()
     schedule_repository = repositories.TodoTaskScheduleRepository()
 
-    unfinished_tasks = task_repository.get_unfinished()
+    get_unfinished_tasks = async_to_sync(task_repository.get_unfinished)
+    unfinished_tasks = get_unfinished_tasks()
+
     today = date.today()
-    scheduled_tasks = schedule_repository.get_scheduled_for_day(
+
+    get_scheduled_for_day = async_to_sync(schedule_repository.get_scheduled_for_day)
+    scheduled_tasks = get_scheduled_for_day(
         today,
         exclude_ids=[task.schedule_id for task in unfinished_tasks if task.schedule_id],
     )
@@ -24,7 +30,8 @@ def create_tasks_for_today():
         for scheduled_task in scheduled_tasks
     ]
 
-    task_repository.persist_all(todo_tasks)
+    persist_all = async_to_sync(task_repository.persist_all)
+    persist_all(todo_tasks)
 
 
 @app.task
@@ -32,5 +39,8 @@ def clean_finished_tasks_and_schedules():
     task_repository = repositories.TodoTaskRepository()
     schedule_repository = repositories.TodoTaskScheduleRepository()
 
-    task_repository.remove_all_finished()
-    schedule_repository.remove_all_finished()
+    remove_all_tasks = async_to_sync(task_repository.remove_all_finished)
+    remove_all_schedules = async_to_sync(schedule_repository.remove_all_finished)
+
+    remove_all_tasks()
+    remove_all_schedules()

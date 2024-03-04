@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from unittest.mock import AsyncMock
 import time_machine
 from todos.integrations.wastes import SCHEDULE_MIXED_WASTES, SCHEDULE_SEGREGATED_WASTES
 from todos.tasks import create_tasks_for_today
@@ -17,7 +18,7 @@ class TestCreateTasksForToday:
         mocker.patch.object(
             repositories.TodoTaskRepository,
             "get_unfinished",
-            return_value=unfinished_tasks,
+            new=AsyncMock(return_value=unfinished_tasks),
         )
         schedules = [
             factories.TodoTaskScheduleFactory.build(id=id) for id in range(6, 9)
@@ -25,10 +26,10 @@ class TestCreateTasksForToday:
         mock_get_schedules = mocker.patch.object(
             repositories.TodoTaskScheduleRepository,
             "get_scheduled_for_day",
-            return_value=schedules,
+            new=AsyncMock(return_value=schedules),
         )
         mock_persist = mocker.patch.object(
-            repositories.TodoTaskRepository, "persist_all"
+            repositories.TodoTaskRepository, "persist_all", new=AsyncMock()
         )
 
         create_tasks_for_today()
@@ -52,7 +53,9 @@ class TestCreateTasksToPrepareWastes:
     def test_should_create_segregated(self, mocker):
         mocker.patch.dict(SCHEDULE_SEGREGATED_WASTES, {2024: {4: [5, 13]}})
         mocker.patch.dict(SCHEDULE_MIXED_WASTES, {2024: {5: [1, 13]}})
-        mock_persist = mocker.patch.object(repositories.TodoTaskRepository, "persist")
+        mock_persist = mocker.patch.object(
+            repositories.TodoTaskRepository, "persist", new=AsyncMock()
+        )
 
         create_task_to_prepare_wastes()
 
@@ -64,7 +67,9 @@ class TestCreateTasksToPrepareWastes:
     def test_should_create_mixed(self, mocker):
         mocker.patch.dict(SCHEDULE_SEGREGATED_WASTES, {2024: {4: [5, 20]}})
         mocker.patch.dict(SCHEDULE_MIXED_WASTES, {2024: {5: [1, 20]}})
-        mock_persist = mocker.patch.object(repositories.TodoTaskRepository, "persist")
+        mock_persist = mocker.patch.object(
+            repositories.TodoTaskRepository, "persist", new=AsyncMock()
+        )
 
         create_task_to_prepare_wastes()
 

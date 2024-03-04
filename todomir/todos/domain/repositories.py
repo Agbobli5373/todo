@@ -7,39 +7,39 @@ from todos.domain import entities
 
 
 class TodoTaskRepository:
-    def get_by_id(self, id: int) -> entities.TodoTask | None:
+    async def get_by_id(self, id: int) -> entities.TodoTask | None:
         try:
-            instance = models.TodoTask.objects.get(id=id)
+            instance = await models.TodoTask.objects.aget(id=id)
             return self._map_from_instance(instance)
         except models.TodoTask.DoesNotExist:
             return None
 
-    def get_by_external_id(self, external_id: str) -> entities.TodoTask | None:
+    async def get_by_external_id(self, external_id: str) -> entities.TodoTask | None:
         try:
-            instance = models.TodoTask.objects.get(external_id=external_id)
+            instance = await models.TodoTask.objects.aget(external_id=external_id)
             return self._map_from_instance(instance)
         except models.TodoTask.DoesNotExist:
             return None
 
-    def get_list(self) -> list[entities.TodoTask]:
+    async def get_list(self) -> list[entities.TodoTask]:
         queryset = models.TodoTask.objects.all().order_by(
             "completed", "day_planned_to_complete"
         )
-        return self._map_from_query(queryset)
+        return await self._map_from_query(queryset)
 
-    def get_finished(self) -> list[entities.TodoTask]:
+    async def get_finished(self) -> list[entities.TodoTask]:
         queryset = models.TodoTask.objects.filter(completed__isnull=False)
-        return self._map_from_query(queryset)
+        return await self._map_from_query(queryset)
 
-    def get_unfinished(self) -> list[entities.TodoTask]:
+    async def get_unfinished(self) -> list[entities.TodoTask]:
         queryset = models.TodoTask.objects.filter(
             schedule__isnull=False, completed__isnull=True
         )
-        return self._map_from_query(queryset)
+        return await self._map_from_query(queryset)
 
-    def persist(self, entity: entities.TodoTask) -> None:
+    async def persist(self, entity: entities.TodoTask) -> None:
         if entity.id:
-            instance = models.TodoTask.objects.get(id=entity.id)
+            instance = await models.TodoTask.objects.aget(id=entity.id)
         else:
             instance = models.TodoTask()
 
@@ -49,24 +49,24 @@ class TodoTaskRepository:
         instance.external_id = entity.external_id
         if not instance.day_planned_to_complete:
             instance.day_planned_to_complete = date.today()
-        instance.save()
+        await instance.asave()
 
         entity.id = instance.id
 
     @transaction.atomic
-    def persist_all(self, entities: list[entities.TodoTask]) -> None:
+    async def persist_all(self, entities: list[entities.TodoTask]) -> None:
         for entity in entities:
-            self.persist(entity)
+            await self.persist(entity)
 
-    def remove_all(self, entities: list[entities.TodoTask]) -> None:
-        models.TodoTask.objects.filter(
+    async def remove_all(self, entities: list[entities.TodoTask]) -> None:
+        await models.TodoTask.objects.filter(
             id__in=[entity.id for entity in entities]
-        ).delete()
+        ).adelete()
 
-    def remove_all_finished(self) -> None:
-        models.TodoTask.objects.filter(completed__isnull=False).delete()
+    async def remove_all_finished(self) -> None:
+        await models.TodoTask.objects.filter(completed__isnull=False).adelete()
 
-    def _map_from_query(self, query: QuerySet) -> list[entities.TodoTask]:
+    async def _map_from_query(self, query: QuerySet) -> list[entities.TodoTask]:
         return [
             entities.TodoTask(
                 id=instance.pk,
@@ -76,7 +76,7 @@ class TodoTaskRepository:
                 completed_at=instance.completed,
                 schedule_id=instance.schedule_id if instance.schedule_id else None,
             )
-            for instance in query
+            async for instance in query
         ]
 
     def _map_from_instance(self, instance: models.TodoTask) -> entities.TodoTask:
@@ -92,31 +92,31 @@ class TodoTaskRepository:
 
 
 class TodoTaskScheduleRepository:
-    def get_list(self) -> list[entities.TodoTaskSchedule]:
+    async def get_list(self) -> list[entities.TodoTaskSchedule]:
         queryset = models.TodoTaskSchedule.objects.all().order_by(
             "day_planned_to_complete"
         )
-        return self._map_from_query(queryset)
+        return await self._map_from_query(queryset)
 
-    def get_scheduled_for_day(
+    async def get_scheduled_for_day(
         self, day: date, exclude_ids: list[int] | None = None
     ) -> list[entities.TodoTaskSchedule]:
         queryset = models.TodoTaskSchedule.objects.filter(day_planned_to_complete=day)
         if exclude_ids:
             queryset = queryset.exclude(pk__in=exclude_ids)
 
-        return self._map_from_query(queryset)
+        return await self._map_from_query(queryset)
 
-    def get_by_id(self, id: int) -> entities.TodoTaskSchedule | None:
+    async def get_by_id(self, id: int) -> entities.TodoTaskSchedule | None:
         try:
-            instance = models.TodoTaskSchedule.objects.get(id=id)
+            instance = await models.TodoTaskSchedule.objects.aget(id=id)
             return self._map_from_instance(instance)
         except models.TodoTask.DoesNotExist:
             return None
 
-    def persist(self, entity: entities.TodoTaskSchedule) -> None:
+    async def persist(self, entity: entities.TodoTaskSchedule) -> None:
         if entity.id:
-            instance = models.TodoTaskSchedule.objects.get(id=entity.id)
+            instance = await models.TodoTaskSchedule.objects.aget(id=entity.id)
         else:
             instance = models.TodoTaskSchedule()
 
@@ -125,17 +125,17 @@ class TodoTaskScheduleRepository:
         instance.repeat_every_x_days = entity.repeat_every_x_days
         instance.repeat_every_x_weeks = entity.repeat_every_x_weeks
         instance.repeat_every_x_months = entity.repeat_every_x_months
-        instance.save()
+        await instance.asave()
 
         entity.id = instance.id
 
-    def remove_all_finished(self) -> None:
-        models.TodoTaskSchedule.objects.filter(
+    async def remove_all_finished(self) -> None:
+        await models.TodoTaskSchedule.objects.filter(
             day_planned_to_complete__lt=date.today()
-        ).delete()
+        ).adelete()
 
-    def remove(self, entity: entities.TodoTaskSchedule) -> None:
-        models.TodoTaskSchedule.objects.filter(id=entity.id).delete()
+    async def remove(self, entity: entities.TodoTaskSchedule) -> None:
+        await models.TodoTaskSchedule.objects.filter(id=entity.id).adelete()
 
     def _map_from_instance(
         self, instance: models.TodoTaskSchedule
@@ -149,5 +149,5 @@ class TodoTaskScheduleRepository:
             repeat_every_x_months=instance.repeat_every_x_months,
         )
 
-    def _map_from_query(self, query: QuerySet) -> list[entities.TodoTaskSchedule]:
-        return [self._map_from_instance(instance) for instance in query]
+    async def _map_from_query(self, query: QuerySet) -> list[entities.TodoTaskSchedule]:
+        return [self._map_from_instance(instance) async for instance in query]

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.shortcuts import Http404, render
 from todos import forms
 from todos.domain import services
@@ -5,8 +6,8 @@ from todos.domain import services
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
 
-def _get_tasks_context() -> dict:
-    tasks = services.get_tasks()
+async def _get_tasks_context() -> dict:
+    tasks = await services.get_tasks()
     return {
         "tasks": tasks,
         "all_completed": all(task.is_completed for task in tasks),
@@ -15,8 +16,8 @@ def _get_tasks_context() -> dict:
 
 
 @require_GET
-def index(request):
-    context = _get_tasks_context()
+async def index(request):
+    context = await _get_tasks_context()
 
     if request.htmx:
         return render(request, "partials/_index.html", context)
@@ -25,8 +26,8 @@ def index(request):
 
 
 @require_GET
-def schedules(request):
-    schedules = services.get_schedules()
+async def schedules(request):
+    schedules = await services.get_schedules()
     if request.htmx:
         return render(request, "partials/_schedules.html", {"schedules": schedules})
 
@@ -34,16 +35,17 @@ def schedules(request):
 
 
 @require_http_methods(["GET", "POST"])
-def create_schedule(request):
+async def create_schedule(request):
     context = {}
     form = forms.ScheduleForm()
 
     if request.method == "POST":
         form = forms.ScheduleForm(request.POST)
         if form.is_valid():
-            schedule = services.create_schedule(form.cleaned_data)
+            schedule = await services.create_schedule(form.cleaned_data)
+            schedules = await services.get_schedules()
             context = {
-                "schedules": services.get_schedules(),
+                "schedules": schedules,
                 "schedule": schedule,
                 "action": "created",
             }
@@ -60,8 +62,8 @@ def create_schedule(request):
 
 
 @require_http_methods(["GET", "POST"])
-def edit_schedule(request, schedule_id: int):
-    schedule = services.get_schedule_by_id(schedule_id)
+async def edit_schedule(request, schedule_id: int):
+    schedule = await services.get_schedule_by_id(schedule_id)
     if not schedule:
         raise Http404
 
@@ -71,9 +73,10 @@ def edit_schedule(request, schedule_id: int):
     if request.method == "POST":
         form = forms.ScheduleForm(request.POST)
         if form.is_valid():
-            schedule = services.update_schedule(schedule, form.cleaned_data)
+            schedule = await services.update_schedule(schedule, form.cleaned_data)
+            schedules = await services.get_schedules()
             context = {
-                "schedules": services.get_schedules(),
+                "schedules": schedules,
                 "schedule": schedule,
                 "action": "updated",
             }
@@ -89,14 +92,21 @@ def edit_schedule(request, schedule_id: int):
 
 
 @require_POST
-def complete_task_view(request):
+async def complete_task_view(request):
     form = forms.CompleteTaskForm(request.POST)
     if form.is_valid():
-        services.complete_task(form.cleaned_data["task_id"])
+        task = await services.get_task_by_id(form.cleaned_data["task_id"])
+        if not task:
+            raise ValidationError("Task does not exist!")
+
+        if task.is_completed:
+            raise ValidationError("Task was already completed!")
+
+        await services.complete_task(task.id)
     else:
         raise Exception("unhandled")
 
-    context = _get_tasks_context()
+    context = await _get_tasks_context()
     if request.htmx:
         return render(request, "partials/_tasks.html", context)
 
@@ -104,14 +114,14 @@ def complete_task_view(request):
 
 
 @require_POST
-def add_new_task_view(request):
+async def add_new_task_view(request):
     form = forms.NewTaskForm(request.POST)
     if form.is_valid():
-        services.add_new_task(form.cleaned_data["new_task"])
+        await services.add_new_task(form.cleaned_data["new_task"])
     else:
         raise Exception("unhandled")
 
-    context = _get_tasks_context()
+    context = await _get_tasks_context()
     if request.htmx:
         return render(request, "partials/_tasks.html", context)
 

@@ -5,8 +5,9 @@ from django.views.decorators.http import require_POST
 
 
 @require_POST
-def cat_view(request):
-    context = {"cat": services.get_cat()}
+async def cat_view(request):
+    cat = await services.get_cat()
+    context = {"cat": cat}
     if request.htmx:
         return render(request, "partials/_cat.html", context)
 

@@ -4,11 +4,13 @@ django-htmx
 django-ninja
 environs
 humanize
+httpx
 pydantic
 requests
 redis
 
 pytest
+pytest-asyncio
 pytest-django
 pytest-mock
 polyfactory
