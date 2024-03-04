@@ -10,7 +10,8 @@ Uses [uv](https://github.com/astral-sh/uv) for package management and `ruff` in 
 $ uv venv
 $ source .venv/bin/activate
 $ uv pip install -r requirements.txt
-$ cd todomir 
+$ cd todomir
+$ python manage.py migrate
 $ python manage.py runserver
 ```
 
