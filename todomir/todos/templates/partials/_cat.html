@@ -10,11 +10,9 @@
     >
       Emergency Cat Photo
     </button>
-    <span class="htmx-indicator">Please wait, finding the best cat...</span>
   </div>
   {% if cat %}
-  <div>
-    <image src="{{cat.url}}" alt="Please wait, cat is preparing for you..."/>
-  </div>
+  <br/>
+  <image src="{{cat.url}}" alt="Please wait, cat is preparing for you..."/>
   {% endif %}
 </section>
