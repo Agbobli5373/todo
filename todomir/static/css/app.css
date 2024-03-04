@@ -1,4 +1,4 @@
-.completed-task {
+.completed-list-item {
   text-decoration: line-through;
   color: darkgray;
 }
@@ -18,7 +18,11 @@
 .button-small {
   padding: 6px, 16px, 6px, 16px;
 }
-.task-item {
+.list-item {
   list-style: none;
   padding: 5px 0 5px 0;
+}
+.list-item-undo {
+  cursor: pointer;
+  padding-right: 10px;
 }

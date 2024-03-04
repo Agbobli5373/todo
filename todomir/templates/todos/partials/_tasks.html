@@ -1,0 +1,52 @@
+{% load static %}
+<div class="tasks-container">
+  <div>
+    {% if all_completed %}
+    <h6 class="all-completed">Good job! All tasks are completed!</h6>
+    {% elif partially_completed %}
+    <h6 class="parially-completed">You completed {{ partially_completed }} tasks today, keep it up!</h6>
+    {% else %}
+    <h6>You have {{ tasks | length }} task(s) for today</h6>
+    {% endif %}
+  </div>
+  <div>
+    <ul>
+      {% if tasks %} {% for task in tasks %}
+      <input id="task_{{ task.id }}"name="task_id" type="hidden" value="{{ task.id }}" />
+      <li
+        class="list-item"
+        {% if task.completed %} disabled {% endif %}
+      >
+      {% if task.completed %}
+        <img 
+          class="list-item-undo"
+          src="{% static 'svg/refresh-cw.svg' %}"
+          hx-post="/todos/undo"
+          hx-target=".tasks-container"
+          hx-swap="outerHTML"
+          hx-include="#task_{{ task.id }}"
+          hx-indicator="#loading"
+          hx-disabled-elt="this"
+        ></img>
+      {% else %}
+        <input
+          type="checkbox"
+          class="todo-checkbox"
+          hx-post="/todos/complete"
+          hx-target=".tasks-container"
+          hx-swap="outerHTML"
+          hx-include="#task_{{ task.id }}"
+          hx-indicator="#loading"
+          hx-disabled-elt="this"
+        />
+      {% endif %}
+        <span
+          class="{% if task.completed %} completed-list-item {% elif task.is_overdue %} overdue-task {% endif %}"
+        >
+          {{ task.name }}
+        </span>
+      </li>
+      {% endfor %} {% else %} No tasks for today :D {% endif %}
+    </ul>
+  </div>
+</div>

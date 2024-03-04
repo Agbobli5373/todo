@@ -34,6 +34,17 @@
         <ul>
           <li>
             <a
+              href="/cat"
+              hx-get="/cat"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >🐈</a
+            >
+          </li>
+          <li>
+            <a
               href="/"
               hx-get="/"
               hx-target="#content-container"
@@ -52,6 +63,17 @@
               hx-indicator="#loading"
               hx-push-url="true"
               >Schedules</a
+            >
+          </li>
+          <li>
+            <a
+              href="/shopping-list"
+              hx-get="/shopping-list"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >Shopping List</a
             >
           </li>
         </ul>

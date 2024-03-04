@@ -44,7 +44,7 @@ class TodoTaskRepository:
             instance = models.TodoTask()
 
         instance.name = entity.name
-        instance.completed = entity.completed_at
+        instance.completed = entity.completed
         instance.schedule_id = entity.schedule_id
         instance.external_id = entity.external_id
         if not instance.day_planned_to_complete:
@@ -72,8 +72,7 @@ class TodoTaskRepository:
                 id=instance.pk,
                 name=instance.name,
                 is_overdue=instance.is_overdue,
-                is_completed=instance.completed is not None,
-                completed_at=instance.completed,
+                completed=instance.completed,
                 schedule_id=instance.schedule_id if instance.schedule_id else None,
             )
             async for instance in query
@@ -85,8 +84,7 @@ class TodoTaskRepository:
             id=instance.pk,
             name=instance.name,
             is_overdue=instance.day_planned_to_complete < today,
-            is_completed=instance.completed is not None,
-            completed_at=instance.completed,
+            completed=instance.completed,
             schedule_id=instance.schedule_id if instance.schedule_id else None,
         )
 

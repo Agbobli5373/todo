@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.core.exceptions import ValidationError
 
 
-class CompleteTaskForm(forms.Form):
+class TaskIDForm(forms.Form):
     task_id = forms.IntegerField()
 
 

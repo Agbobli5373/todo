@@ -22,6 +22,8 @@ services:
       - DJANGO_SECRET=secret
       - DEBUG=false
       - DB_PATH=/srv/db/db.sqlite3
+    volumes:
+      - todomir_db:/srv/db/
 
   celery-beat:
     image: todomir 
@@ -30,6 +32,8 @@ services:
       - DJANGO_SECRET=secret
       - DEBUG=false
       - DB_PATH=/srv/db/db.sqlite3
+    volumes:
+      - todomir_db:/srv/db/
 
   redis:
     image: redis:latest

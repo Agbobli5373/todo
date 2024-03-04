@@ -8,8 +8,7 @@ class TodoTask(BaseModel):
     id: int | None = Field(default=None)
     name: str
     is_overdue: bool = Field(default=False)
-    is_completed: bool = Field(default=False)
-    completed_at: datetime.datetime | None = Field(default=None)
+    completed: datetime.datetime | None = Field(default=None)
     schedule_id: int | None = Field(default=None)
     external_id: str | None = Field(default=None)
 
@@ -29,6 +28,19 @@ class TodoTaskSchedule(BaseModel):
     @property
     def day(self) -> str:
         return humanize.naturalday(self.day_planned_to_complete, format="%A, %b %d")
+
+    @property
+    def frequency_days(self) -> int:
+        if self.repeat_every_x_days:
+            return self.repeat_every_x_days
+        if self.repeat_every_x_weeks:
+            return self.repeat_every_x_weeks * 7
+
+        # easy way to calculate but should be enough
+        if self.repeat_every_x_months:
+            return self.repeat_every_x_months * 7 * 4
+
+        return 0
 
     @property
     def frequency(self) -> str | None:

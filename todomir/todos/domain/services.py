@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta, date
 
-from django.core.exceptions import ValidationError
-
-from todos.domain import entities, repositories
+from todos.domain import entities, repositories, exceptions
 
 
 async def get_tasks() -> list[entities.TodoTask]:
@@ -10,47 +8,51 @@ async def get_tasks() -> list[entities.TodoTask]:
     return await repository.get_list()
 
 
-async def complete_task(task_id: int):
+async def complete_task(task: entities.TodoTask):
+    if task.completed:
+        raise exceptions.TaskAlreadyCompleted
+
     task_repository = repositories.TodoTaskRepository()
-    task = await task_repository.get_by_id(task_id)
 
-    if not task:
-        raise ValidationError("Task does not exist")
-
-    task.completed_at = datetime.now()
+    task.completed = datetime.now()
     await task_repository.persist(task)
 
     schedule_repository = repositories.TodoTaskScheduleRepository()
     if task.schedule_id and (
         schedule := await schedule_repository.get_by_id(task.schedule_id)
     ):
-        if schedule.repeat_every_x_days:
-            schedule.day_planned_to_complete = date.today() + timedelta(
-                days=schedule.repeat_every_x_days
-            )
-            await schedule_repository.persist(schedule)
-        elif schedule.repeat_every_x_weeks:
-            schedule.day_planned_to_complete = (
-                schedule.day_planned_to_complete
-                + timedelta(weeks=schedule.repeat_every_x_weeks)
-            )
-            if schedule.day_planned_to_complete <= date.today():
-                schedule.day_planned_to_complete = date.today() + timedelta(
-                    weeks=schedule.repeat_every_x_weeks
-                )
-            await schedule_repository.persist(schedule)
-        elif schedule.repeat_every_x_months:
-            schedule.day_planned_to_complete = (
-                schedule.day_planned_to_complete
-                + timedelta(weeks=schedule.repeat_every_x_months * 4)
-            )
-            if schedule.day_planned_to_complete <= date.today():
-                schedule.day_planned_to_complete = date.today() + timedelta(
-                    weeks=schedule.repeat_every_x_months * 4
-                )
-            await schedule_repository.persist(schedule)
-        else:
+        frequency_in_days = schedule.frequency_days
+        if frequency_in_days == 0:
             await schedule_repository.remove(schedule)
+            return
+
+        target_date = schedule.day_planned_to_complete
+        while target_date <= date.today():
+            target_date = target_date + timedelta(days=frequency_in_days)
+
+        schedule.day_planned_to_complete = target_date
+        await schedule_repository.persist(schedule)
+
+
+async def undo_task(task: entities.TodoTask):
+    if not task.completed:
+        raise exceptions.TaskNotCompletedYet
+
+    task_repository = repositories.TodoTaskRepository()
+
+    task.completed = None
+    await task_repository.persist(task)
+
+    schedule_repository = repositories.TodoTaskScheduleRepository()
+    if task.schedule_id and (
+        schedule := await schedule_repository.get_by_id(task.schedule_id)
+    ):
+        frequency_in_days = schedule.frequency_days
+
+        schedule.day_planned_to_complete = schedule.day_planned_to_complete - timedelta(
+            days=frequency_in_days
+        )
+        await schedule_repository.persist(schedule)
 
 
 async def add_new_task(new_task: str):
@@ -89,11 +91,7 @@ async def get_task_by_id(task_id: int) -> entities.TodoTask | None:
     repository = repositories.TodoTaskRepository()
     task = await repository.get_by_id(task_id)
 
-    if not task:
-        raise ValidationError("Task does not exist!")
+    if not task or not task.id:
+        raise exceptions.TaskNotFound
 
-    if task.is_completed:
-        raise ValidationError("Task was already completed!")
-
-    assert task.id
     return task

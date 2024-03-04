@@ -21,7 +21,11 @@ from todos.api.endpoints import api as todos_api
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # todos
     path("", include("todos.urls")),
-    path("cat", include("cat.urls")),
     path("api/", todos_api.urls),
+    # cat
+    path("cat/", include("cat.urls")),
+    # shopping
+    path("shopping-list/", include("shopping.urls")),
 ]

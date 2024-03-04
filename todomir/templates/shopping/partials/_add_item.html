@@ -1,13 +1,12 @@
 <div class="grid">
   <form _="on htmx:afterRequest reset() me">
-    <input name="new_task" type="text" placeholder="New task" id="todo-name" />
+    <input name="name" type="text" placeholder="New item" />
     <button
       type="submit"
-      hx-post="/add"
+      hx-post="/shopping-list/create"
       hx-indicator="#loading"
-      hx-target=".tasks-container"
+      hx-target=".items-container"
       hx-swap="outerHTML"
-      hx-include="#todo-name"
       hx-disabled-elt="this"
     >
       Add

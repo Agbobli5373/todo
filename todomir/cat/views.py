@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from cat.domain import services
 
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET
 
 
-@require_POST
-async def cat_view(request):
+@require_GET
+async def index(request):
     cat = await services.get_cat()
     context = {"cat": cat}
     if request.htmx:
-        return render(request, "partials/_cat.html", context)
+        return render(request, "cat/partials/_index.html", context)
 
-    return render(request, "index.html", context)
+    return render(request, "cat/index.html", context)

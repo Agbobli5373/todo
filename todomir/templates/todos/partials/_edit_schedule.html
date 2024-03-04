@@ -1,11 +1,11 @@
-<h1>Create Schedule</h1>
+<h1>Edit Schedule</h1>
 <hr/>
 <div class="schedules-form-container">
   <form>
-  {% include "partials/_schedule_form.html" %}
+  {% include "todos/partials/_schedule_form.html" %}
   <button 
     type="submit"
-    hx-post="/schedules/create"
+    hx-post="/schedules/{{ schedule.id }}"
     hx-target="#content-container"
     hx-swap="innerHTML"
     hx-indicator="#loading"
