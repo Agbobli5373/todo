@@ -1,9 +1,9 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import Field
+from common.domain import entities
 
 
-class ShoppingListItem(BaseModel):
-    id: int | None = Field(default=None)
+class ShoppingListItem(entities.DbEntity):
     name: str
     completed: datetime | None = Field(default=None)
     created: datetime

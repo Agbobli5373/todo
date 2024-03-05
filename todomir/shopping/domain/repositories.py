@@ -1,32 +1,16 @@
+from typing import Type
 from django.db.models import QuerySet
 from shopping.domain import entities
 from shopping import models
+from common.domain import repositories
 
 
-class ShoppingListItemRepository:
-    async def get_list(self) -> list[entities.ShoppingListItem]:
-        queryset = models.ShoppingListItem.objects.all()
-        return await self._map_from_query(queryset)
-
-    async def persist(self, entity: entities.ShoppingListItem):
-        if entity.id:
-            instance = await models.ShoppingListItem.objects.aget(id=entity.id)
-        else:
-            instance = models.ShoppingListItem()
-
-        instance.name = entity.name
-        instance.completed = entity.completed
-        await instance.asave()
-
-        entity.id = instance.id
-
-    async def get_by_id(self, item_id: int) -> entities.ShoppingListItem | None:
-        try:
-            instance = await models.ShoppingListItem.objects.aget(id=item_id)
-        except models.ShoppingListItem.DoesNotExist:
-            return None
-        else:
-            return self._map_from_instance(instance)
+class ShoppingListItemRepository(
+    repositories.Repository[models.ShoppingListItem, entities.ShoppingListItem]
+):
+    @property
+    def model(self) -> Type[models.ShoppingListItem]:
+        return models.ShoppingListItem
 
     def _map_from_instance(
         self, instance: models.ShoppingListItem
@@ -42,3 +26,10 @@ class ShoppingListItemRepository:
         self, queryset: QuerySet
     ) -> list[entities.ShoppingListItem]:
         return [self._map_from_instance(instance) async for instance in queryset]
+
+    def _update_instance_with_entity_values(
+        self, instance: models.ShoppingListItem, entity: entities.ShoppingListItem
+    ):
+        instance.name = entity.name
+        instance.completed = entity.completed
+        instance.created = entity.created

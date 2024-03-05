@@ -1,11 +1,11 @@
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import Field, field_serializer
 from datetime import date
 import humanize
 import datetime
+from common.domain import entities
 
 
-class TodoTask(BaseModel):
-    id: int | None = Field(default=None)
+class TodoTask(entities.DbEntity):
     name: str
     is_overdue: bool = Field(default=False)
     completed: datetime.datetime | None = Field(default=None)
@@ -13,8 +13,7 @@ class TodoTask(BaseModel):
     external_id: str | None = Field(default=None)
 
 
-class TodoTaskSchedule(BaseModel):
-    id: int | None = Field(default=None)
+class TodoTaskSchedule(entities.DbEntity):
     name: str
     day_planned_to_complete: date
     repeat_every_x_days: int | None = Field(default=None)
