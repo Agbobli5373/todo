@@ -30,8 +30,8 @@ def create_tasks_for_today():
         for scheduled_task in scheduled_tasks
     ]
 
-    persist_all = async_to_sync(task_repository.persist_all)
-    persist_all(todo_tasks)
+    bulk_create = async_to_sync(task_repository.bulk_create)
+    bulk_create(todo_tasks)
 
 
 @app.task

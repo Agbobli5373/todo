@@ -1,5 +1,4 @@
 from datetime import date
-from django.db import transaction
 from django.db.models import QuerySet
 from todos.database import models
 
@@ -39,24 +38,22 @@ class TodoTaskRepository:
 
     async def persist(self, entity: entities.TodoTask) -> None:
         if entity.id:
-            instance = await models.TodoTask.objects.aget(id=entity.id)
+            instance = instance = await models.TodoTask.objects.aget(id=entity.id)
         else:
             instance = models.TodoTask()
 
-        instance.name = entity.name
-        instance.completed = entity.completed
-        instance.schedule_id = entity.schedule_id
-        instance.external_id = entity.external_id
-        if not instance.day_planned_to_complete:
-            instance.day_planned_to_complete = date.today()
+        instance = self._update_instance_with_entity_values(instance, entity)
         await instance.asave()
-
         entity.id = instance.id
 
-    @transaction.atomic
-    async def persist_all(self, entities: list[entities.TodoTask]) -> None:
+    async def bulk_create(self, entities: list[entities.TodoTask]) -> None:
+        batch = []
         for entity in entities:
-            await self.persist(entity)
+            instance = models.TodoTask()
+            self._update_instance_with_entity_values(instance, entity)
+            batch.append(instance)
+
+        await models.TodoTask.objects.abulk_create(batch)
 
     async def remove_all(self, entities: list[entities.TodoTask]) -> None:
         await models.TodoTask.objects.filter(
@@ -65,6 +62,16 @@ class TodoTaskRepository:
 
     async def remove_all_finished(self) -> None:
         await models.TodoTask.objects.filter(completed__isnull=False).adelete()
+
+    def _update_instance_with_entity_values(
+        self, instance: models.TodoTask, entity: entities.TodoTask
+    ):
+        instance.name = entity.name
+        instance.completed = entity.completed
+        instance.schedule_id = entity.schedule_id
+        instance.external_id = entity.external_id
+        if not instance.day_planned_to_complete:
+            instance.day_planned_to_complete = date.today()
 
     async def _map_from_query(self, query: QuerySet) -> list[entities.TodoTask]:
         return [

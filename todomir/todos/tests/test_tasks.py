@@ -28,8 +28,8 @@ class TestCreateTasksForToday:
             "get_scheduled_for_day",
             new=AsyncMock(return_value=schedules),
         )
-        mock_persist = mocker.patch.object(
-            repositories.TodoTaskRepository, "persist_all", new=AsyncMock()
+        mock_bulk_create = mocker.patch.object(
+            repositories.TodoTaskRepository, "bulk_create", new=AsyncMock()
         )
 
         create_tasks_for_today()
@@ -37,7 +37,7 @@ class TestCreateTasksForToday:
         mock_get_schedules.assert_called_once_with(
             date.today(), exclude_ids=[task.schedule_id for task in unfinished_tasks]
         )
-        mock_persist.assert_called_once_with(
+        mock_bulk_create.assert_called_once_with(
             [
                 entities.TodoTask(
                     name=scheduled_task.name,
