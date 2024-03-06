@@ -10,6 +10,6 @@ elif [[ "$1" == "celery-beat" ]]; then
 else
     python manage.py collectstatic --noinput
     python manage.py migrate 
-    nginx
+    python manage.py nginx
     gunicorn --config $GUNICORN_CONFIG
 fi
