@@ -1,45 +1,22 @@
-FROM python:3.12-alpine
-MAINTAINER jkawczynski
+# Pull base image
+FROM python:3.8
 
-ENV APP_ROOT=/app
-ENV SRV_ROOT=/srv
-ENV GUNICORN_CONFIG=/srv/gunicorn/config.py
-ENV VENV_PATH=/opt/venv
-ENV PROD=true
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN apk update && apk add nginx \
-  apk add openrc \
-  rm -rf /var/cache/apk/*
+# Set work directory
+WORKDIR /code
 
-RUN adduser --uid 1000 app --gecos app --disabled-password
+# Install dependencies
+COPY requirements.txt /code/
+RUN pip install -r requirements.txt
 
-RUN touch /var/run/nginx.pid && \
-    mkdir /var/cache/nginx && \
-    chown -R app:app /var/run/nginx.pid && \
-    chown -R app:app /var/log/nginx && \
-    chown -R app:app /var/lib/nginx && \
-    chown -R app:app /var/cache/nginx
+# Copy project
+COPY . /code/
 
-RUN pip install uv
-
-ADD requirements.txt $APP_ROOT/
-WORKDIR $APP_ROOT
-RUN uv venv
-RUN uv pip install gunicorn uvicorn && \
-    uv pip install -r requirements.txt
-
-ADD etc/nginx/nginx.conf /etc/nginx/nginx.conf
-ADD etc/gunicorn/* $SRV_ROOT/gunicorn/
-ADD todomir $APP_ROOT/
-ADD docker_entrypoint.sh $SRV_ROOT
-
-RUN mkdir $SRV_ROOT/db/ && touch $SRV_ROOT/db/db.sqlite3
-
-RUN chmod +x $SRV_ROOT/docker_entrypoint.sh && \
-    chown app:app -R $APP_ROOT && \
-    chown app:app -R $SRV_ROOT
-
-USER app
-
+# Expose port
 EXPOSE 8000
-ENTRYPOINT ["/srv/docker_entrypoint.sh"]
+
+# Run the application:
+CMD ["python", "todomir/manage.py", "runserver", "0.0.0.0:8000"]
