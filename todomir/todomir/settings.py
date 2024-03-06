@@ -31,9 +31,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET", "super_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", [])
-CSRF_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
-CORS_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", [])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ["*"])
+CSRF_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", ["*"])
+CORS_TRUSTED_ORIGINS = env.list("TRUSTED_ORIGINS", [*])
 
 
 # Application definition
