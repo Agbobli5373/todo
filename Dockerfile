@@ -15,8 +15,11 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . /code/
 
+# Run migrations
+RUN python todomir/manage.py migrate
+
 # Expose port
 EXPOSE 8000
 
-# Run the application:
+# Run the application
 CMD ["python", "todomir/manage.py", "runserver", "0.0.0.0:8000"]
